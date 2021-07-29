@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { View, FlatList, Alert, Text } from 'react-native'
+import { View, FlatList, Alert } from 'react-native'
 import { ListItem, Button, Icon } from 'react-native-elements'
 import UsersContext from '../context/UsersContext'
 
@@ -41,14 +41,6 @@ export default props => {
         )
     }
 
-    function gerarLista() {
-        return state.users.map(user => {
-            return (
-                <Text key={user.id}>{user.name}</Text>
-            )
-        })
-    }
-
     function getUserItem({ item: user }) {
         return (
             <ListItem
@@ -70,8 +62,6 @@ export default props => {
                 data={state.users}
                 renderItem={getUserItem}
             />
-            <Text>Teste</Text>
-            {gerarLista()}
         </View>
     )
 }
