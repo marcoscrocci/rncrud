@@ -1,0 +1,142 @@
+Notas do Projeto - nrcrud
+
+Tecnologias:
+React-Native com Hooks e Context API
+React Navigation: https://reactnavigation.org/
+React Native Elements: https://reactnativeelements.com/docs/
+
+Aulas da Cod3r
+site: https://www.cod3r.com.br/courses/take/react-native-crud/lessons/16307491-criar-projeto
+
+Criar projeto:
+npx react-native init rncrud
+cd rncrud
+
+Instalação do React Navigation: 
+npm install @react-navigation/native
+npm install react-native-reanimated react-native-gesture-handler react-native-screens react-native-safe-area-context @react-native-community/masked-view
+npx pod-install ios
+
+npm install @react-navigation/stack
+
+Instalação do React Native Elements: 
+npm i react-native-elements --save
+npm i --save react-native-vector-icons 
+
+react-native link react-native-vector-icons
+
+Erro no XCode:
+Lexical or Preprocessor Issue
+React/RCTBridgeDelegate.h file not found
+AppDelegate.h
+
+Solução parcial: 
+1) Removi a pasta /Users/{USERNAME}/.cocoapods
+2) Na pasta do usuário, executei o comando sudo gem install cocoapods
+3) Na pasta do projeto, entrei na pasta ios e executei pod install
+
+Solucionou o erro anterior, mas gerou outro erro: 
+Uncategorized Group
+Module map file '/Users/marcoscrocci/Library/Developer/Xcode/DerivedData/rncrud-hbombxnedxyapbfrfnbbojemreob/Build/Products/Debug-iphonesimulator/YogaKit/YogaKit.modulemap' not found
+
+Solução:
+Abra <Project> / ios / <Project Name> .xcodeproj / project.pbxproj em qualquer IDE e pesquise por IPHONEOS_DEPLOYMENT_TARGET; haverá 2 deles e ambos devem ser pelo menos 11,0
+
+Problema para executar o aplicativo no iPhone
+- Abrir Ajustes > Geral > Gerenciamento de Dispositivo > Apple Development > Permitir
+
+
+xcode event2/event-config.h file not found
+https://stackoverflow.com/questions/66019068/event2-event-config-h-file-not-found
+How to fix it
+1. If you don't need flipper
+If you are not using flipper in your app, just open your Podfile in your ios app project folder and comment out these lines of codes.
+use_flipper!
+post_install do |installer|
+  flipper_post_install(installer)
+end
+2. If you need to use flipper in your app.
+If you still need to use flipper in your app then specify the flipper-folly version as follows
+  use_flipper!({ 'Flipper' => '0.80.0' })
+  post_install do |installer|
+    flipper_post_install(installer)
+  end
+NOTE:
+You will need to update your pods by running
+pod update  
+or
+ pod install
+Also remember to update your cocoapods
+sudo gem install cocoapods
+Refer to this issue for more information.
+
+
+https://blog.cpming.top/p/uint8-t-aka-unsigned-char-vs-enum-clock-t
+No final, deu certo comentando as linhas do flipper, desta forma:
+  # use_flipper!({ 'Flipper' => '0.80.0' })
+  # post_install do |installer|
+  #  flipper_post_install(installer)
+  # end
+
+
+
+Resolver os erro do react-native-vector-icons
+[Xcode 11] 'Multiple commands produce' error when building with new Xcode build system
+https://github.com/oblador/react-native-vector-icons/issues/1074
+MattiasMansson commented on 15 Feb 2020
+@RnbWd Incase you haven't found your workaround yet, my approach to avoid having to remove it after every pod install was the following:
+	1.	yarn add react-native-vector icons
+	2.	Go into node_modules/react-native-vector-icons/Fonts and copy the fonts you wish to use.
+	3.	Place the copied fonts in a folder (in my case src/assets/icons)
+	4.	Include the icons folder in your react-native-config.js
+module.exports = {
+  assets: ['./src/assets/icons']
+};
+	5.	Modify node_modules/react-native-vector-icons/react-native-config.js to the following
+module.exports = {
+  dependency: {
+    assets: [],
+  },
+};
+	6.	Inside node_modules/react-native-vector-icons/RNVectorIcons.podspec, remove the s.resources = "Fonts/*.ttf" line entirely.
+require 'json'
+version = JSON.parse(File.read('package.json'))["version"]
+
+Pod::Spec.new do |s|
+
+  s.name           = "RNVectorIcons"
+  s.version        = version
+  s.summary        = "Customizable Icons for React Native with support for NavBar/TabBar, image source and full styling."
+  s.homepage       = "https://github.com/oblador/react-native-vector-icons"
+  s.license        = "MIT"
+  s.author         = { "Joel Arvidsson" => "joel@oblador.se" }
+  s.platforms      = { :ios => "9.0", :tvos => "9.0" }
+  s.source         = { :git => "https://github.com/oblador/react-native-vector-icons.git", :tag => "v#{s.version}" }
+  s.source_files   = 'RNVectorIconsManager/**/*.{h,m}'
+  s.preserve_paths = "**/*.js"
+  s.dependency 'React'
+
+end
+	7.	Run npx patch-package react-native-vector-icons.
+	8.	Run cd ios && pod install && cd ..
+	9.	Run npx react-native link
+	10.	Add "postinstall": "npx patch-package" to the scripts in package.json so the patch is automatically applied after every install.
+
+
+
+
+
+
+
+  Run instructions for Android:
+    • Have an Android emulator running (quickest way to get started), or a device connected.
+    • cd "/Users/marcoscrocci/Projetos/react-native/rncrud" && npx react-native run-android
+  
+  Run instructions for iOS:
+    • cd "/Users/marcoscrocci/Projetos/react-native/rncrud" && npx react-native run-ios
+    - or -
+    • Open rncrud/ios/rncrud.xcworkspace in Xcode or run "xed -b ios"
+    • Hit the Run button
+    
+  Run instructions for macOS:
+    • See https://aka.ms/ReactNativeGuideMacOS for the latest up-to-date instructions.
