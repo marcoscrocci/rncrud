@@ -1,10 +1,53 @@
-import React from 'react';
-import { View, Text, FlatList } from 'react-native';
+import React, { useContext } from 'react'
+import { View, FlatList, Alert, Text } from 'react-native'
 import { ListItem, Button, Icon } from 'react-native-elements'
-import users from '../data/users'
+import UsersContext from '../context/UsersContext'
 
 export default props => {
-    //console.warn(Object.keys(props)); // ["navigation","route"]
+
+    const { state, dispatch } = useContext(UsersContext)
+
+    function confirmUserDeletion(user) {
+        Alert.alert('Excluir Usuário', 'Deseja excluir o usuário?', [
+            {
+                text: 'Sim',
+                onPress() {
+                    dispatch({
+                        type: 'deleteUser',
+                        payload: user,
+                    })
+                }
+            },
+            {
+                text: 'Não'
+            }
+        ])
+    }
+
+    function getActions(user) {
+        return (
+            <>
+                <Button
+                    onPress={() => props.navigation.navigate('UserForm', user)}
+                    type="clear"
+                    icon={<Icon name="edit" size={25} color="orange" />}
+                />
+                <Button
+                    onPress={() => confirmUserDeletion(user)}
+                    type="clear"
+                    icon={<Icon name="delete" size={25} color="red" />}
+                />
+            </>
+        )
+    }
+
+    function gerarLista() {
+        return state.users.map(user => {
+            return (
+                <Text key={user.id}>{user.name}</Text>
+            )
+        })
+    }
 
     function getUserItem({ item: user }) {
         return (
@@ -13,22 +56,22 @@ export default props => {
                 key={user.id}
                 title={user.name}
                 subtitle={user.email}
-                bottomDivider 
-                //rightElement={getActions(user)}
+                bottomDivider
+                rightElement={getActions(user)}
                 onPress={() => props.navigation.navigate('UserForm', user)}
             />
         )
-        //<Text>{user.name} - {user.email}</Text>
     }
-
 
     return (
         <View>
-            <FlatList 
+            <FlatList
                 keyExtractor={user => user.id.toString()}
-                data={users}
+                data={state.users}
                 renderItem={getUserItem}
             />
+            <Text>Teste</Text>
+            {gerarLista()}
         </View>
     )
 }
